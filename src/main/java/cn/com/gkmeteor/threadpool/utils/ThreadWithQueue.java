@@ -31,12 +31,12 @@ public class ThreadWithQueue extends Thread {
      *
      * @param i 第几个线程
      */
-    public ThreadWithQueue(int i) {
+    public ThreadWithQueue(int i, ContactService contactService, UserService userService) {
         queue = new java.util.concurrent.LinkedBlockingQueue<>();
         threadName = "Thread(" + i + ")";
 
-        contactService = BeanGetUtil.getBean(ContactService.class);
-        userService = BeanGetUtil.getBean(UserService.class);
+        this.contactService = contactService;
+        this.userService = userService;
 
         this.start();
     }

@@ -1,14 +1,27 @@
 package cn.com.gkmeteor.threadpool.utils;
 
+import cn.com.gkmeteor.threadpool.service.ContactService;
+import cn.com.gkmeteor.threadpool.service.UserService;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 线程池工具类
  */
-public class ThreadPoolUtil {
+@Component
+public class ThreadPoolUtil implements InitializingBean {
 
     public static int POOL_SIZE = 10;
+
+    @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private UserService userService;
 
     private static ThreadPoolUtil instance = null;
 
@@ -16,9 +29,10 @@ public class ThreadPoolUtil {
 
     private static int index = 0;
 
-    public synchronized static ThreadPoolUtil getInstance() {
+    public static ThreadPoolUtil getInstance() {
         if (instance == null) {
-            instance = new ThreadPoolUtil();
+//            instance = new ThreadPoolUtil();
+            throw new IllegalStateException("ThreadPoolUtil 初始化异常");
         }
         return instance;
     }
@@ -27,10 +41,10 @@ public class ThreadPoolUtil {
      * 构造方法
      */
     public ThreadPoolUtil() {
-        for (int i = 0; i < POOL_SIZE; i++) {
-            ThreadWithQueue threadWithQueue = new ThreadWithQueue(i);
-            this.threadpool.add(threadWithQueue);
-        }
+//        for (int i = 0; i < POOL_SIZE; i++) {
+//            ThreadWithQueue threadWithQueue = new ThreadWithQueue(i, contactService, userService);
+//            this.threadpool.add(threadWithQueue);
+//        }
     }
 
     public ThreadWithQueue returnOneThread() throws Exception {
@@ -47,5 +61,15 @@ public class ThreadPoolUtil {
         ThreadWithQueue thread = threadpool.get(index);
 
         return thread;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        for (int i = 0; i < POOL_SIZE; i++) {
+            ThreadWithQueue threadWithQueue = new ThreadWithQueue(i, contactService, userService);
+            this.threadpool.add(threadWithQueue);
+        }
+
+        instance = this;
     }
 }
