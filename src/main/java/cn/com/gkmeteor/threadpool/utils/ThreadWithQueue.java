@@ -1,20 +1,21 @@
 package cn.com.gkmeteor.threadpool.utils;
 
-import cn.com.gkmeteor.threadpool.service.ContactService;
-import cn.com.gkmeteor.threadpool.service.UserService;
+import cn.com.gkmeteor.threadpool.service.ThreadExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Queue;
 
+/**
+ * 带有【参数阻塞队列】的线程
+ */
 public class ThreadWithQueue extends Thread {
 
     private Logger logger = LoggerFactory.getLogger(ThreadWithQueue.class);
 
-    private ContactService contactService;
-    private UserService userService;
-
     private Queue<String> queue;
+
+    private ThreadExecutorService threadExecutorService;    // 线程运行后的业务逻辑处理
 
     private String threadName;
 
@@ -30,13 +31,13 @@ public class ThreadWithQueue extends Thread {
      * 构造方法
      *
      * @param i 第几个线程
+     * @param threadExecutorService 线程运行后的业务逻辑处理
      */
-    public ThreadWithQueue(int i, ContactService contactService, UserService userService) {
+    public ThreadWithQueue(int i, ThreadExecutorService threadExecutorService) {
         queue = new java.util.concurrent.LinkedBlockingQueue<>();
         threadName = "Thread(" + i + ")";
 
-        this.contactService = contactService;
-        this.userService = userService;
+        this.threadExecutorService = threadExecutorService;
 
         this.start();
     }
@@ -74,9 +75,9 @@ public class ThreadWithQueue extends Thread {
                 String param = queue.poll();
                 logger.info("{} 开始运行，参数队列中还有 {} 个在等待", this.getThreadName(), this.getQueueSize());
                 if ("contact".equals(param)) {
-                    contactService.doWork(param);
+                    threadExecutorService.doContact(param);
                 } else if ("user".equals(param)) {
-                    userService.doWork(param);
+                    threadExecutorService.doUser(param);
                 } else {
                     logger.info("参数无效，不做处理");
                 }

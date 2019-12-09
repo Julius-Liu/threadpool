@@ -1,7 +1,6 @@
 package cn.com.gkmeteor.threadpool.utils;
 
-import cn.com.gkmeteor.threadpool.service.ContactService;
-import cn.com.gkmeteor.threadpool.service.UserService;
+import cn.com.gkmeteor.threadpool.service.ThreadExecutorService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,10 +17,7 @@ public class ThreadPoolUtil implements InitializingBean {
     public static int POOL_SIZE = 10;
 
     @Autowired
-    private ContactService contactService;
-
-    @Autowired
-    private UserService userService;
+    private ThreadExecutorService threadExecutorService;
 
     private static ThreadPoolUtil instance = null;
 
@@ -31,20 +27,9 @@ public class ThreadPoolUtil implements InitializingBean {
 
     public static ThreadPoolUtil getInstance() {
         if (instance == null) {
-//            instance = new ThreadPoolUtil();
             throw new IllegalStateException("ThreadPoolUtil 初始化异常");
         }
         return instance;
-    }
-
-    /**
-     * 构造方法
-     */
-    public ThreadPoolUtil() {
-//        for (int i = 0; i < POOL_SIZE; i++) {
-//            ThreadWithQueue threadWithQueue = new ThreadWithQueue(i, contactService, userService);
-//            this.threadpool.add(threadWithQueue);
-//        }
     }
 
     public ThreadWithQueue returnOneThread() throws Exception {
@@ -66,7 +51,7 @@ public class ThreadPoolUtil implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         for (int i = 0; i < POOL_SIZE; i++) {
-            ThreadWithQueue threadWithQueue = new ThreadWithQueue(i, contactService, userService);
+            ThreadWithQueue threadWithQueue = new ThreadWithQueue(i, threadExecutorService);
             this.threadpool.add(threadWithQueue);
         }
 
