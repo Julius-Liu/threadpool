@@ -19,16 +19,16 @@ public class ThreadExecutorService {
         String result = "No";
         try {
             logger.info("=== Step 1: 开始获取数据 ===");
-            Thread.sleep(3000);
+            Thread.sleep(30000);
             logger.info("=== 数据获取完成 ===");
 
             logger.info("=== Step 2: 开始数据处理 ===");
-            Thread.sleep(5000);
+            Thread.sleep(50000);
             logger.info("=== 数据处理完成 ===");
 
             logger.info("=== Step 3: 开始入库操作 ===");
-            Thread.sleep(2000);
-            logger.info("=== 入库完成，所有处理结束 === Complete");
+            Thread.sleep(20000);
+            logger.info("=== 入库完成，所有处理结束 === {} Complete", param);
 
             return "Yes";
 
@@ -49,16 +49,16 @@ public class ThreadExecutorService {
         String result = "No";
         try {
             logger.info("=== Step 1: 开始收集用户数据 ===");
-            Thread.sleep(6000);
+            Thread.sleep(60000);
             logger.info("=== 数据收集完成 ===");
 
             logger.info("=== Step 2: 开始数据清洗 ===");
-            Thread.sleep(6000);
+            Thread.sleep(60000);
             logger.info("=== 数据清洗完成 ===");
 
             logger.info("=== Step 3: 开始入库操作 ===");
-            Thread.sleep(3000);
-            logger.info("=== 入库完成，所有处理结束 === Complete");
+            Thread.sleep(30000);
+            logger.info("=== 入库完成，所有处理结束 === {} Complete", param);
 
             return "Yes";
 

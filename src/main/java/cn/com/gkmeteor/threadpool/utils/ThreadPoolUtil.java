@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class ThreadPoolUtil implements InitializingBean {
 
-    public static int POOL_SIZE = 10;
+    public static int POOL_SIZE = 2;
 
     @Autowired
     private ThreadExecutorService threadExecutorService;

@@ -4,7 +4,7 @@ import cn.com.gkmeteor.threadpool.service.ThreadExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * 带有【参数阻塞队列】的线程
@@ -13,7 +13,7 @@ public class ThreadWithQueue extends Thread {
 
     private Logger logger = LoggerFactory.getLogger(ThreadWithQueue.class);
 
-    private Queue<String> queue;
+    private BlockingQueue<String> queue;
 
     private ThreadExecutorService threadExecutorService;    // 线程运行后的业务逻辑处理
 
@@ -30,7 +30,7 @@ public class ThreadWithQueue extends Thread {
     /**
      * 构造方法
      *
-     * @param i 第几个线程
+     * @param i                     第几个线程
      * @param threadExecutorService 线程运行后的业务逻辑处理
      */
     public ThreadWithQueue(int i, ThreadExecutorService threadExecutorService) {
@@ -43,19 +43,15 @@ public class ThreadWithQueue extends Thread {
     }
 
     /**
-     * 将导入任务放到导入线程中，并唤醒该线程执行
-     * 同一时刻，只能被唤醒一次，只有等到该导入线程的队列为空了，才能再唤醒一次
+     * 将参数放到线程的参数队列中
      *
      * @param param 参数
      * @return
      */
-    public synchronized int paramAdded(String param) {
+    public void paramAdded(String param) {
         queue.offer(param);
-        synchronized (queue) {
-            queue.notify();
-        }
 
-        return queue.size();
+        logger.info("参数已入队，{} 目前参数个数 {}", this.getThreadName(), queue.size());
     }
 
     public synchronized int getQueueSize() {
@@ -66,17 +62,11 @@ public class ThreadWithQueue extends Thread {
     public void run() {
         while (true) {
             try {
-                if (queue.isEmpty()) {
-                    logger.info("{} --> 参数队列为空，即将阻塞", this.getThreadName());
-                    synchronized (queue) {
-                        queue.wait();
-                    }
-                }
-                String param = queue.poll();
+                String param = queue.take();
                 logger.info("{} 开始运行，参数队列中还有 {} 个在等待", this.getThreadName(), this.getQueueSize());
-                if ("contact".equals(param)) {
+                if (param.startsWith("contact")) {
                     threadExecutorService.doContact(param);
-                } else if ("user".equals(param)) {
+                } else if (param.startsWith("user")) {
                     threadExecutorService.doUser(param);
                 } else {
                     logger.info("参数无效，不做处理");
