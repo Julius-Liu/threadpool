@@ -48,6 +48,11 @@ public class ThreadPoolUtil implements InitializingBean {
         return thread;
     }
 
+    /**
+     * 在所有基础属性初始化完成后，初始化当前类
+     *
+     * @throws Exception
+     */
     @Override
     public void afterPropertiesSet() throws Exception {
         for (int i = 0; i < POOL_SIZE; i++) {
