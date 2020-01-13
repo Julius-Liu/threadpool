@@ -17,6 +17,9 @@ public class TaskController {
     @PostMapping("/task-submit")
     public String taskSubmit(String param) {
         try {
+            /**
+             * 轮询获取一个线程，然后将参数放到线程的参数队列中
+             */
             ThreadWithQueue threadWithQueue = threadPoolUtil.returnOneThread();
             threadWithQueue.paramAdded(param);
         } catch (Exception e) {
@@ -24,12 +27,6 @@ public class TaskController {
         }
 
         return "Yes";
-    }
-
-    @PostMapping("/init")
-    public String init() {
-        ThreadPoolUtil instance = ThreadPoolUtil.getInstance();
-        return "Init Success";
     }
 
 }

@@ -14,24 +14,24 @@ import java.util.List;
 @Component
 public class ThreadPoolUtil implements InitializingBean {
 
-    public static int POOL_SIZE = 2;
+    /**
+     * 线程池容量
+     */
+    public static int POOL_SIZE = 10;
 
     @Autowired
     private ThreadExecutorService threadExecutorService;
-
-    private static ThreadPoolUtil instance = null;
 
     private List<ThreadWithQueue> threadpool = new ArrayList<>();
 
     private static int index = 0;
 
-    public static ThreadPoolUtil getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("ThreadPoolUtil 初始化异常");
-        }
-        return instance;
-    }
-
+    /**
+     * 轮询获取一个线程
+     *
+     * @return
+     * @throws Exception
+     */
     public ThreadWithQueue returnOneThread() throws Exception {
         ThreadWithQueue thread = null;
         do {
@@ -41,6 +41,11 @@ public class ThreadPoolUtil implements InitializingBean {
         return thread;
     }
 
+    /**
+     * 轮询获取一个线程
+     *
+     * @return
+     */
     private ThreadWithQueue getOneThread() {
         index = (++index) % POOL_SIZE;
         ThreadWithQueue thread = threadpool.get(index);
@@ -59,7 +64,6 @@ public class ThreadPoolUtil implements InitializingBean {
             ThreadWithQueue threadWithQueue = new ThreadWithQueue(i, threadExecutorService);
             this.threadpool.add(threadWithQueue);
         }
-
-        instance = this;
     }
+
 }
