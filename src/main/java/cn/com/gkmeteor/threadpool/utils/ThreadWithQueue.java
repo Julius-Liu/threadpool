@@ -50,12 +50,16 @@ public class ThreadWithQueue extends Thread {
      * @param param 参数
      * @return
      */
-    public void paramAdded(String param) {
+    public String paramAdded(String param) {
+        String result = "";
         if(queue.offer(param)) {
             logger.info("参数已入队，{} 目前参数个数 {}", this.getThreadName(), queue.size());
+            result = "参数已加入线程池，等待处理";
         } else {
             logger.info("队列已达最大容量，请稍后重试");
+            result = "线程池已满，请稍后重试";
         }
+        return result;
     }
 
     public synchronized int getQueueSize() {

@@ -16,17 +16,18 @@ public class TaskController {
 
     @PostMapping("/task-submit")
     public String taskSubmit(String param) {
+        String result = "Yes";
         try {
             /**
              * 轮询获取一个线程，然后将参数放到线程的参数队列中
              */
             ThreadWithQueue threadWithQueue = threadPoolUtil.returnOneThread();
-            threadWithQueue.paramAdded(param);
+            result = threadWithQueue.paramAdded(param);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return "Yes";
+        return result;
     }
 
 }
