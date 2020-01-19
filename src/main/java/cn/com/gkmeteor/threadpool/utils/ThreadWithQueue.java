@@ -11,6 +11,8 @@ import java.util.concurrent.BlockingQueue;
  */
 public class ThreadWithQueue extends Thread {
 
+    public static int CAPACITY = 10;
+
     private Logger logger = LoggerFactory.getLogger(ThreadWithQueue.class);
 
     private BlockingQueue<String> queue;
@@ -34,7 +36,7 @@ public class ThreadWithQueue extends Thread {
      * @param threadExecutorService 线程运行后的业务逻辑处理
      */
     public ThreadWithQueue(int i, ThreadExecutorService threadExecutorService) {
-        queue = new java.util.concurrent.LinkedBlockingQueue<>();
+        queue = new java.util.concurrent.LinkedBlockingQueue<>(CAPACITY);
         threadName = "Thread(" + i + ")";
 
         this.threadExecutorService = threadExecutorService;
@@ -49,9 +51,11 @@ public class ThreadWithQueue extends Thread {
      * @return
      */
     public void paramAdded(String param) {
-        queue.offer(param);
-
-        logger.info("参数已入队，{} 目前参数个数 {}", this.getThreadName(), queue.size());
+        if(queue.offer(param)) {
+            logger.info("参数已入队，{} 目前参数个数 {}", this.getThreadName(), queue.size());
+        } else {
+            logger.info("队列已达最大容量，请稍后重试");
+        }
     }
 
     public synchronized int getQueueSize() {
